@@ -11,9 +11,9 @@ import {
 } from "../../redux/withToolkit/actions/contactList";
 import {
   contactsSelector,
-  filterSelector,
   loaderSelector,
   errorSelector,
+  filteredContacts,
 } from "../../redux/selectors";
 
 import Modal from "../Modal/Modal";
@@ -23,19 +23,13 @@ import Error from "../Error/Error";
 const ContactList = () => {
   const dispatch = useDispatch();
   const contactList = useSelector((state) => contactsSelector(state));
-  const filter = useSelector((state) => filterSelector(state));
   const loader = useSelector((state) => loaderSelector(state));
   const error = useSelector((state) => errorSelector(state));
+  const filteredContactList = useSelector((state) => filteredContacts(state));
 
   const onDelete = (id) => {
     dispatch(asyncDeleteContact(id));
   };
-
-  const filteredList = contactList.filter(
-    (contact) =>
-      contact.name.toLowerCase().includes(filter.toLowerCase().trim()) ||
-      contact.number.includes(filter.trim())
-  );
 
   useEffect(() => {
     dispatch(asyncSetContactList());
@@ -64,7 +58,7 @@ const ContactList = () => {
       </CSSTransition>
 
       <TransitionGroup component="ul" className={styles.contactList}>
-        {filteredList.map((contact) => (
+        {filteredContactList.map((contact) => (
           <CSSTransition key={contact.id} classNames={popIn} timeout={250}>
             <li className={styles.contactListItem}>
               <span className={styles.name}>{contact.name}</span>
